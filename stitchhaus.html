@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StitchHaus — Embroidery Digitizing & Custom Embroidery</title>
+<meta name="description" content="Custom embroidery digitizing, garment embroidery, and original embroidered designs & clothing — made to order.">
+<meta property="og:title" content="StitchHaus — Embroidery Digitizing & Custom Embroidery">
+<meta property="og:description" content="Send your design, get a machine-ready embroidery file, embroidered garments, or shop ready-made pieces.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="StitchHaus — Embroidery Digitizing & Custom Embroidery">
+<meta name="twitter:description" content="Custom embroidery digitizing, garment embroidery, and original designs — made to order.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AOS/2.3.4/aos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#FAF7F1; --bg-alt:#F1EBE0; --card:#FFFFFF; --line:#E7DFD0;
+  --ink:#2B2A28; --muted:#8A8478;
+  --thread:#D8322A; --gold:#C9A227;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible{
+  outline:2.5px solid var(--thread); outline-offset:3px; border-radius:4px;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--ink); font-family:'Manrope',sans-serif; overflow-x:hidden;}
+h1,h2,h3{font-family:'Playfair Display',serif; font-weight:700;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer;}
+.page{display:none;}
+.page.active{display:block; animation:fadeInPage .45s ease;}
+@keyframes fadeInPage{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+.wrap{max-width:1200px; margin:0 auto; padding:0 5vw;}
+.eyebrow{color:var(--thread); font-size:.85rem; font-weight:600; margin-bottom:10px;}
+
+/* NAV */
+nav{position:sticky; top:0; z-index:60; background:rgba(250,247,241,.92); backdrop-filter:blur(8px);
+  border-bottom:2px dashed var(--line); display:flex; justify-content:space-between; align-items:center; padding:16px 5vw;}
+.logo{font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700;}
+.logo em{color:var(--thread); font-style:normal;}
+.nav-links{display:flex; gap:26px; font-size:.9rem; font-weight:600;}
+.nav-links a{padding-bottom:4px; border-bottom:2px solid transparent;}
+.nav-links a.active{border-color:var(--thread); color:var(--thread);}
+.nav-right{display:flex; align-items:center; gap:14px;}
+#cart-btn{background:var(--ink); color:#fff; border:none; padding:9px 18px; border-radius:24px; font-size:.85rem; position:relative;}
+#cart-count{position:absolute; top:-7px; right:-7px; background:var(--thread); color:#fff; font-size:.65rem; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+.mobile-toggle{display:none; background:none; border:none; font-size:1.5rem; padding:4px 6px; color:var(--ink);}
+
+@media(max-width:860px){
+  .nav-links{position:fixed; top:63px; left:0; right:0; background:#fff; flex-direction:column; gap:0;
+    max-height:0; overflow:hidden; transition:max-height .35s ease; border-bottom:1px solid var(--line); z-index:55;}
+  .nav-links.open{max-height:320px;}
+  .nav-links a{padding:16px 6vw; border-bottom:1px solid var(--line); width:100%;}
+  .mobile-toggle{display:block;}
+}
+
+/* HERO */
+.hero{position:relative; padding:70px 5vw 60px; display:flex; align-items:center; gap:50px; flex-wrap:wrap;}
+.blob{position:absolute; border-radius:50%; filter:blur(60px); opacity:.28; z-index:0; pointer-events:none;}
+.blob-a{width:340px; height:340px; background:var(--thread); top:-60px; left:-60px;}
+.blob-b{width:260px; height:260px; background:var(--gold); bottom:-40px; right:6%;}
+.hero-text{flex:1; min-width:300px; position:relative; z-index:1;}
+.hero-text h1{font-size:clamp(2rem,5vw,3.4rem); line-height:1.15; margin-bottom:18px;}
+.hero-text p{color:var(--muted); font-size:1.05rem; max-width:440px; margin-bottom:26px;}
+.btn{display:inline-block; background:var(--thread); color:#fff; padding:13px 28px; border-radius:28px; font-weight:600; font-size:.95rem; border:none;}
+.btn.outline{background:transparent; border:1.5px solid var(--ink); color:var(--ink);}
+.hero-stitch{flex:1; min-width:260px; position:relative; z-index:1;}
+.hero-stitch svg{width:100%; height:auto; clip-path:inset(0 100% 0 0); animation:stitchReveal 2.4s steps(22) forwards;}
+.stitch-path{fill:none; stroke:var(--thread); stroke-width:4; stroke-linecap:round; stroke-dasharray:11 9;}
+@keyframes stitchReveal{to{clip-path:inset(0 0% 0 0);}}
+
+/* CHOOSER */
+.trust-bar{padding:0 5vw 40px;}
+.trust-grid{display:flex; flex-wrap:wrap; gap:24px; border-top:2px dashed var(--line); border-bottom:2px dashed var(--line); padding:24px 0;}
+.trust-item{flex:1; min-width:180px; text-align:center;}
+.trust-item strong{display:block; font-family:'Playfair Display',serif; font-size:1.15rem; margin-bottom:4px;}
+.trust-item span{color:var(--muted); font-size:.85rem;}
+
+.faq-section{padding:20px 5vw 70px; max-width:800px; margin:0 auto;}
+.faq-section h2{font-size:1.9rem; margin-bottom:22px;}
+.faq-item{border-bottom:1px dashed var(--line); padding:16px 0;}
+.faq-item summary{font-weight:600; cursor:pointer; list-style:none; position:relative; padding-right:24px;}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary::after{content:'+'; position:absolute; right:0; top:0; color:var(--thread); font-size:1.2rem;}
+.faq-item[open] summary::after{content:'–';}
+.faq-item p{color:var(--muted); margin-top:10px; font-size:.9rem; line-height:1.5;}
+
+.chooser{position:relative; padding:60px 5vw; background:var(--bg-alt); overflow:hidden;}
+.chooser h2{font-size:1.9rem; margin-bottom:8px;}
+.chooser > .wrap > p{color:var(--muted); margin-bottom:36px;}
+.choice-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:22px; position:relative; z-index:1;}
+.choice-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:28px; transition:transform .25s ease, box-shadow .25s ease;}
+.choice-card:hover{transform:translateY(-6px); box-shadow:0 14px 30px rgba(43,42,40,.08);}
+.choice-card .num{color:var(--gold); font-size:.8rem; font-weight:700; margin-bottom:10px;}
+.choice-card h3{font-size:1.2rem; margin-bottom:10px;}
+.choice-card p{color:var(--muted); font-size:.92rem; margin-bottom:18px;}
+.choice-card a{color:var(--thread); font-weight:600; font-size:.9rem;}
+
+/* SWIPERS (shared) */
+.slider-section{position:relative; padding:60px 5vw; overflow:hidden;}
+.slider-section h2{font-size:1.8rem; margin-bottom:26px; position:relative; z-index:1;}
+.swiper{padding-bottom:10px; position:relative; z-index:1;}
+.pf-slide{border-radius:14px; overflow:hidden; height:260px; display:flex; align-items:flex-end; padding:16px; color:#fff; font-weight:600;}
+.prod-slide{border-radius:14px; overflow:hidden; background:var(--card); border:1px solid var(--line);}
+.prod-slide .cov{height:170px; display:flex; align-items:flex-end; padding:14px; color:#fff; font-weight:700; font-family:'Playfair Display',serif;}
+.prod-slide .info{padding:14px;}
+.prod-slide .info .price{color:var(--thread); font-weight:700;}
+
+/* SECTION GENERIC */
+.section-head{padding:60px 5vw 20px; max-width:1200px; margin:0 auto;}
+.section-head h2{font-size:2rem; margin-bottom:8px;}
+.section-head p{color:var(--muted); max-width:520px;}
+
+/* ORDER WIZARD */
+.wizard{padding:20px 5vw 90px; max-width:820px; margin:0 auto;}
+.step{display:none; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px;}
+.step.active{display:block;}
+.step h3{margin-bottom:18px; font-size:1.25rem;}
+.type-options{display:grid; gap:14px;}
+.type-opt{display:flex; align-items:center; gap:14px; border:1.5px solid var(--line); border-radius:12px; padding:16px; cursor:pointer;}
+.type-opt.selected{border-color:var(--thread); background:rgba(216,50,42,.04);}
+.type-opt .dot{width:18px; height:18px; border-radius:50%; border:2px solid var(--line); flex-shrink:0;}
+.type-opt.selected .dot{border-color:var(--thread); background:var(--thread);}
+.type-opt strong{display:block; font-size:.96rem;} .type-opt span{color:var(--muted); font-size:.83rem;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:.85rem; font-weight:600; margin-bottom:6px;}
+.field input, .field select, .field textarea{width:100%; border:1.5px solid var(--line); background:#fff; padding:11px 13px; border-radius:9px; font-size:.92rem; font-family:inherit;}
+.chip-group{display:flex; gap:10px; flex-wrap:wrap;}
+.chip{border:1.5px solid var(--line); border-radius:20px; padding:8px 16px; font-size:.85rem; background:#fff;}
+.chip.selected{border-color:var(--thread); background:var(--thread); color:#fff;}
+.wizard-nav{display:flex; justify-content:space-between; margin-top:26px; gap:10px;}
+.wizard-progress{display:flex; gap:6px; margin-bottom:24px;}
+.wizard-progress span{height:4px; flex:1; background:var(--line); border-radius:3px;}
+.wizard-progress span.done{background:var(--thread);}
+.confirm-box{text-align:center; padding:20px 0;}
+.confirm-box h3{color:var(--thread); margin-bottom:10px;}
+
+/* PRODUCT GRIDS */
+.controls-row{display:flex; gap:10px; flex-wrap:wrap; margin:0 auto 30px; max-width:1200px; padding:0 5vw;}
+.tab{background:#fff; border:1px solid var(--line); padding:8px 16px; border-radius:20px; font-size:.85rem;}
+.tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px; padding:0 5vw 80px; max-width:1200px; margin:0 auto;}
+.p-card{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; transition:transform .2s ease, border-color .2s ease;}
+.p-card:hover{transform:translateY(-4px); border:1px dashed var(--thread);}
+.p-cover{height:150px; display:flex; align-items:flex-end; padding:14px; color:#fff; font-weight:700; font-family:'Playfair Display',serif; font-size:1.02rem;}
+.p-body{padding:16px; display:flex; flex-direction:column; gap:6px;}
+.p-body .tag{font-size:.7rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.4px;}
+.p-body .desc{color:var(--muted); font-size:.8rem;}
+.p-foot{display:flex; justify-content:space-between; align-items:center; margin-top:10px;}
+.price{font-weight:700;}
+.add-btn{background:var(--bg-alt); border:1px solid var(--line); padding:7px 14px; border-radius:8px; font-size:.8rem;}
+.add-btn:hover{border-color:var(--thread);}
+
+/* PORTFOLIO GRID */
+.portfolio-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:16px; padding:0 5vw 90px; max-width:1200px; margin:0 auto;}
+.pf-item{border-radius:14px; height:210px; display:flex; align-items:flex-end; padding:14px; color:#fff; font-weight:600; font-size:.88rem; transition:transform .25s ease;}
+.pf-item:hover{transform:scale(1.03);}
+
+/* CART DRAWER */
+#overlay{position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:90; display:none;}
+#cart-drawer{position:fixed; top:0; right:-380px; width:360px; max-width:90vw; height:100%; background:#fff; z-index:95;
+  transition:right .3s ease; display:flex; flex-direction:column; border-left:1px solid var(--line);}
+#cart-drawer.open{right:0;}
+.drawer-head{padding:20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
+#close-cart{background:none; border:none; font-size:1.4rem; color:var(--muted);}
+#cart-items{flex:1; overflow-y:auto; padding:14px 20px;}
+.cart-row{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); gap:8px;}
+.cart-row .info h4{font-size:.86rem;} .cart-row .info span{color:var(--muted); font-size:.74rem;}
+.qty-ctrl{display:flex; align-items:center; gap:8px;}
+.qty-ctrl button{background:var(--bg-alt); border:1px solid var(--line); width:22px; height:22px; border-radius:5px;}
+.remove-btn{background:none; border:none; color:var(--thread); font-size:.72rem;}
+.drawer-foot{padding:18px 20px; border-top:1px solid var(--line);}
+.subtotal{display:flex; justify-content:space-between; font-weight:700; margin-bottom:14px;}
+.empty-msg{color:var(--muted); text-align:center; margin-top:40px; font-size:.9rem;}
+
+footer{padding:40px 5vw; text-align:center; color:var(--muted); font-size:.85rem; border-top:2px dashed var(--line);}
+
+/* RESPONSIVE REFINEMENTS */
+@media(max-width:600px){
+  .hero{padding:50px 5vw 40px; text-align:center; flex-direction:column;}
+  .hero-text p{margin-left:auto; margin-right:auto;}
+  .hero-stitch{order:2; max-width:260px; margin:0 auto;}
+  .section-head{padding:44px 5vw 10px;}
+  .step{padding:22px;}
+  .wizard-nav{flex-direction:column-reverse;}
+  .wizard-nav .btn, .wizard-nav .btn.outline{width:100%; text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:-4px; margin-right:6px;">
+      <path d="M3 12 Q7 4 12 12 T21 12" fill="none" stroke="var(--thread)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3.5 3"/>
+      <circle cx="21" cy="12" r="1.6" fill="var(--gold)"/>
+    </svg>Stitch<em>Haus</em></div>
+  <div class="nav-links" id="nav-links">
+    <a href="#home" data-page="home">Home</a>
+    <a href="#order" data-page="order">Order</a>
+    <a href="#shop" data-page="shop">Shop</a>
+    <a href="#designs" data-page="designs">Designs</a>
+    <a href="#portfolio" data-page="portfolio">Portfolio</a>
+  </div>
+  <div class="nav-right">
+    <button id="cart-btn" onclick="openCart()">Cart<span id="cart-count">0</span></button>
+    <button class="mobile-toggle" id="mobile-toggle" onclick="toggleNav()">☰</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page" id="page-home">
+  <section class="hero">
+    <div class="blob blob-a" data-parallax="0.15"></div>
+    <div class="blob blob-b" data-parallax="-0.1"></div>
+    <div class="hero-text">
+      <div class="eyebrow">Embroidery digitizing & custom stitching</div>
+      <h1>From your idea to a finished stitch.</h1>
+      <p>Send me a design and I'll turn it into a machine-ready file, embroider it onto your own garment, or ship you something new — made to order.</p>
+      <a href="#order" class="btn">Start an order</a>
+    </div>
+    <div class="hero-stitch" data-parallax="0.25">
+      <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+        <path class="stitch-path" d="M10 200 Q 60 40, 120 150 T 230 100 T 340 180 Q 370 190 390 120" stroke-dasharray="6 10"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="trust-bar">
+    <div class="wrap trust-grid">
+      <div class="trust-item"><strong>3–5 days</strong><span>typical turnaround</span></div>
+      <div class="trust-item"><strong>Free revision</strong><span>if the stitch-out isn't right</span></div>
+      <div class="trust-item"><strong>Ships worldwide</strong><span>tracked shipping on physical orders</span></div>
+    </div>
+  </section>
+
+  <section class="chooser">
+    <div class="blob blob-a" style="width:260px;height:260px;top:auto;bottom:-100px;left:-60px;opacity:.18" data-parallax="0.12"></div>
+    <div class="wrap">
+      <h2>What do you need?</h2>
+      <p>Pick a starting point — you can always adjust details in the next step.</p>
+      <div class="choice-grid">
+        <div class="choice-card" data-aos="fade-up">
+          <div class="num">01</div>
+          <h3>Get a digitizing file</h3>
+          <p>Send me your logo or artwork, I'll convert it into a stitch-ready embroidery file (DST, PES & more).</p>
+          <a href="#order" onclick="presetOrder('file')">Start this order →</a>
+        </div>
+        <div class="choice-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="num">02</div>
+          <h3>Embroider my item</h3>
+          <p>Send your own t-shirt, hoodie or cap and I'll embroider your design directly onto it.</p>
+          <a href="#order" onclick="presetOrder('own-item')">Start this order →</a>
+        </div>
+        <div class="choice-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="num">03</div>
+          <h3>Buy something ready-made</h3>
+          <p>Shop my embroidered clothing, or browse the designs library for a file you can use yourself.</p>
+          <a href="#shop">Visit the shop →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slider-section">
+    <div class="wrap"><h2>Recent work</h2></div>
+    <div class="swiper" id="home-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="pf-slide" style="background:linear-gradient(135deg,#D8322A,#7a1a15)">Corporate polo, left chest</div></div>
+        <div class="swiper-slide"><div class="pf-slide" style="background:linear-gradient(135deg,#C9A227,#6e5714)">Wedding hoodie set</div></div>
+        <div class="swiper-slide"><div class="pf-slide" style="background:linear-gradient(135deg,#3E7C6B,#1c3b32)">Pet portrait cap</div></div>
+        <div class="swiper-slide"><div class="pf-slide" style="background:linear-gradient(135deg,#8A6FB0,#3d3050)">Band merch back patch</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="wrap">
+      <h2>Common questions</h2>
+      <details class="faq-item">
+        <summary>What file formats do I get?</summary>
+        <p>DST for most commercial machines, plus PES on request. Other formats available if your machine needs something specific — just mention it in the order notes.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I send my own t-shirt or hoodie to be embroidered?</summary>
+        <p>Yes — pick "Embroider my own item" in the order flow. I'll confirm shipping details with you once your request comes in.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if the stitch-out doesn't look right?</summary>
+        <p>One revision is included on every digitizing order at no extra cost — I want the file to actually sew well on your machine, not just look good on screen.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Do you ship internationally?</summary>
+        <p>Yes, physical orders (Shop items and embroidered garments) ship worldwide with tracking.</p>
+      </details>
+    </div>
+  </section>
+</div>
+
+<!-- ORDER -->
+<div class="page" id="page-order">
+  <div class="section-head">
+    <div class="eyebrow">Custom order</div>
+    <h2>Let's build your order</h2>
+    <p>A few quick steps — I'll follow up personally with a quote once you submit.</p>
+  </div>
+  <div class="wizard">
+    <div class="wizard-progress"><span id="pg1" class="done"></span><span id="pg2"></span><span id="pg3"></span></div>
+
+    <div class="step active" id="step1">
+      <h3>What do you need?</h3>
+      <div class="type-options" id="type-options">
+        <div class="type-opt" data-type="file"><div class="dot"></div><div><strong>Digitizing file only</strong><span>You want a DST/PES file made from your artwork</span></div></div>
+        <div class="type-opt" data-type="own-item"><div class="dot"></div><div><strong>Embroider my own item</strong><span>You'll send your garment, I embroider your design on it</span></div></div>
+        <div class="type-opt" data-type="new-garment"><div class="dot"></div><div><strong>New garment with my design</strong><span>Pick a t-shirt/hoodie/cap from me, embroidered with your design</span></div></div>
+      </div>
+      <div class="wizard-nav"><span></span><button class="btn" onclick="nextStep(2)">Continue</button></div>
+    </div>
+
+    <div class="step" id="step2">
+      <h3>Details</h3>
+      <div class="field"><label>Upload your design or logo</label><input type="file" id="design-file"></div>
+      <div class="field" id="garment-field" style="display:none">
+        <label>Garment type</label>
+        <div class="chip-group" id="garment-chips">
+          <div class="chip" data-g="T-shirt">T-shirt</div>
+          <div class="chip" data-g="Hoodie">Hoodie</div>
+          <div class="chip" data-g="Cap">Cap</div>
+          <div class="chip" data-g="Shirt">Button shirt</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Placement</label>
+        <div class="chip-group" id="placement-chips">
+          <div class="chip" data-p="Left chest">Left chest</div>
+          <div class="chip" data-p="Center front">Center front</div>
+          <div class="chip" data-p="Back">Back</div>
+          <div class="chip" data-p="Sleeve">Sleeve</div>
+        </div>
+      </div>
+      <div class="field"><label>Notes for me (thread colors, sizing, deadline...)</label><textarea rows="3" id="order-notes"></textarea></div>
+      <div class="wizard-nav"><button class="btn outline" onclick="prevStep(1)">Back</button><button class="btn" onclick="nextStep(3)">Continue</button></div>
+    </div>
+
+    <div class="step" id="step3">
+      <h3>Contact info</h3>
+      <div class="field"><label>Name</label><input id="c-name"></div>
+      <div class="field"><label>Email</label><input id="c-email" placeholder="you@example.com"></div>
+      <div class="wizard-nav"><button class="btn outline" onclick="prevStep(2)">Back</button><button class="btn" onclick="submitOrder(event)">Submit request</button></div>
+    </div>
+
+    <div class="step" id="step-done">
+      <div class="confirm-box">
+        <h3>Request sent</h3>
+        <p style="color:var(--muted)">I'll review your order and reply with a quote — feel free to open chat if you want to add anything.</p>
+        <button class="btn" style="margin-top:16px" onclick="location.hash='home'">Back to home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="page" id="page-shop">
+  <div class="section-head"><div class="eyebrow">Shop</div><h2>Embroidered clothing</h2><p>Ready-to-wear pieces with my original designs.</p></div>
+  <div class="swiper" id="shop-swiper" style="padding:0 5vw 40px">
+    <div class="swiper-wrapper" id="shop-swiper-wrapper"></div>
+  </div>
+  <div class="controls-row" id="shop-tabs">
+    <button class="tab active" data-f="all">All</button>
+    <button class="tab" data-f="T-shirt">T-shirts</button>
+    <button class="tab" data-f="Hoodie">Hoodies</button>
+    <button class="tab" data-f="Cap">Caps</button>
+  </div>
+  <div class="grid" id="shop-grid"></div>
+</div>
+
+<!-- DESIGNS -->
+<div class="page" id="page-designs">
+  <div class="section-head"><div class="eyebrow">Designs library</div><h2>Buy a design file</h2><p>Digital embroidery files, ready to sew on your own machine.</p></div>
+  <div class="swiper" id="designs-swiper" style="padding:0 5vw 40px">
+    <div class="swiper-wrapper" id="designs-swiper-wrapper"></div>
+  </div>
+  <div class="grid" id="designs-grid"></div>
+</div>
+
+<!-- PORTFOLIO -->
+<div class="page" id="page-portfolio">
+  <div class="section-head"><div class="eyebrow">Portfolio</div><h2>Finished work</h2><p>A selection of recent client projects.</p></div>
+  <div class="portfolio-grid" id="portfolio-grid"></div>
+</div>
+
+<!-- ADMIN (not linked in nav — open via #admin) -->
+<div class="page" id="page-admin">
+  <div class="section-head"><div class="eyebrow">Private</div><h2>Admin</h2><p>Orders coming in from the site.</p></div>
+  <div class="wizard" id="admin-login-box">
+    <div class="step active">
+      <h3>Sign in</h3>
+      <div class="field"><label>Email</label><input id="admin-email"></div>
+      <div class="field"><label>Password</label><input id="admin-pass" type="password"></div>
+      <button class="btn" onclick="adminLogin()">Sign in</button>
+      <p id="admin-error" style="color:var(--thread); font-size:.85rem; margin-top:10px;"></p>
+    </div>
+  </div>
+  <div class="wrap" id="admin-dashboard" style="display:none; padding-bottom:80px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+      <div class="controls">
+        <button class="tab admin-tab active" data-tab="orders">Orders</button>
+        <button class="tab admin-tab" data-tab="products">Products</button>
+      </div>
+      <button class="btn outline" onclick="adminLogout()">Sign out</button>
+    </div>
+
+    <div id="admin-panel-orders">
+      <div id="orders-list"></div>
+    </div>
+
+    <div id="admin-panel-products" style="display:none;">
+      <div class="step active" style="margin-bottom:24px;">
+        <h3>Add shop product (t-shirt / hoodie / cap)</h3>
+        <div class="field"><label>Title</label><input id="np-title"></div>
+        <div class="field"><label>Type</label>
+          <select id="np-type"><option>T-shirt</option><option>Hoodie</option><option>Cap</option><option>Shirt</option></select>
+        </div>
+        <div class="field"><label>Price ($)</label><input id="np-price" type="number" step="0.01"></div>
+        <div class="field"><label>Cover colors (hex)</label>
+          <div style="display:flex; gap:10px;">
+            <input id="np-color1" value="#D8322A" style="width:auto;">
+            <input id="np-color2" value="#7a1a15" style="width:auto;">
+          </div>
+        </div>
+        <button class="btn" onclick="addShopProduct()">Add product</button>
+      </div>
+      <div id="admin-shop-list" style="margin-bottom:36px;"></div>
+
+      <div class="step active" style="margin-bottom:24px;">
+        <h3>Add design file</h3>
+        <div class="field"><label>Title</label><input id="nd-title"></div>
+        <div class="field"><label>Format tag</label><input id="nd-tag" value="DST / PES"></div>
+        <div class="field"><label>Price ($)</label><input id="nd-price" type="number" step="0.01"></div>
+        <div class="field"><label>Cover colors (hex)</label>
+          <div style="display:flex; gap:10px;">
+            <input id="nd-color1" value="#3E7C6B" style="width:auto;">
+            <input id="nd-color2" value="#1c3b32" style="width:auto;">
+          </div>
+        </div>
+        <button class="btn" onclick="addDesignProduct()">Add design</button>
+      </div>
+      <div id="admin-designs-list"></div>
+    </div>
+  </div>
+</div>
+
+<footer>StitchHaus — embroidery digitizing, custom stitching & original designs.</footer>
+
+<div id="overlay" onclick="closeCart()"></div>
+<div id="cart-drawer">
+  <div class="drawer-head"><h3>Your cart</h3><button id="close-cart" onclick="closeCart()">&times;</button></div>
+  <div id="cart-items"></div>
+  <div class="drawer-foot"><div class="subtotal"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+    <button class="btn" style="width:100%">Checkout</button></div>
+</div>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6ab0be696919ea344715d9de/1k316fj4q';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/AOS/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+<script>
+try{ AOS.init({duration:600, once:true}); }catch(e){ console.error('AOS failed to load:', e); }
+
+/* ---------- SUPABASE ---------- */
+const SUPABASE_URL = "https://wekxaovhqhcboanjczxk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_D54bpwvM-3x4CLrPo6hyaw_uzBjCqQz";
+let sb = null;
+try{ sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
+catch(e){ console.error('Supabase failed to load:', e); }
+
+/* ---------- PARALLAX (GSAP ScrollTrigger) — optional, page still works if this fails ---------- */
+try{
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('[data-parallax]').forEach(el=>{
+    const speed = parseFloat(el.dataset.parallax);
+    gsap.to(el, {
+      y: () => window.innerHeight * speed,
+      ease:'none',
+      scrollTrigger:{trigger:el.closest('section'), start:'top bottom', end:'bottom top', scrub:true}
+    });
+  });
+}catch(e){ console.error('GSAP parallax failed to init:', e); }
+
+let homeSwiper, shopSwiper, designsSwiper;
+try{
+  homeSwiper = new Swiper('#home-swiper', {slidesPerView:1.15, spaceBetween:16, breakpoints:{700:{slidesPerView:2.3},1000:{slidesPerView:3.2}}});
+}catch(e){ console.error('Swiper (home) failed to init:', e); }
+
+/* ---------- ROUTER ---------- */
+const pages = ['home','order','shop','designs','portfolio','admin'];
+function route(){
+  let p = location.hash.replace('#','') || 'home';
+  if(!pages.includes(p)) p='home';
+  pages.forEach(pg=>{
+    const el = document.getElementById('page-'+pg);
+    el.classList.toggle('active', pg===p);
+  });
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active', a.dataset.page===p));
+  document.getElementById('nav-links').classList.remove('open');
+  window.scrollTo(0,0);
+  if(window.ScrollTrigger) setTimeout(()=>ScrollTrigger.refresh(), 300);
+  if(p==='admin') checkAdminSession();
+}
+window.addEventListener('hashchange', route);
+route();
+
+function toggleNav(){ document.getElementById('nav-links').classList.toggle('open'); }
+
+/* ---------- PRODUCT DATA (defaults shown until Supabase loads, then replaced) ---------- */
+let shopItems = [
+  {id:1,title:"Wildflower Tee",type:"T-shirt",price:32,c1:"#D8322A",c2:"#7a1a15"},
+  {id:2,title:"Monogram Hoodie",type:"Hoodie",price:58,c1:"#C9A227",c2:"#6e5714"},
+  {id:3,title:"Botanical Dad Cap",type:"Cap",price:26,c1:"#3E7C6B",c2:"#1c3b32"},
+  {id:4,title:"Sunburst Tee",type:"T-shirt",price:34,c1:"#8A6FB0",c2:"#3d3050"},
+  {id:5,title:"Heritage Hoodie",type:"Hoodie",price:62,c1:"#D8322A",c2:"#7a1a15"},
+  {id:6,title:"Linework Cap",type:"Cap",price:24,c1:"#C9A227",c2:"#6e5714"}
+];
+let designItems = [
+  {id:101,title:"Floral Monogram Set",tag:"DST / PES",price:12,c1:"#D8322A",c2:"#7a1a15"},
+  {id:102,title:"Wildflower Bouquet",tag:"DST / PES",price:9,c1:"#3E7C6B",c2:"#1c3b32"},
+  {id:103,title:"Cat Portrait Outline",tag:"DST / PES",price:11,c1:"#8A6FB0",c2:"#3d3050"},
+  {id:104,title:"Retro Sunburst",tag:"DST / PES",price:8,c1:"#C9A227",c2:"#6e5714"},
+  {id:105,title:"Botanical Wreath",tag:"DST / PES",price:13,c1:"#D8322A",c2:"#7a1a15"},
+  {id:106,title:"Initial Letter Pack",tag:"DST / PES",price:15,c1:"#3E7C6B",c2:"#1c3b32"}
+];
+const portfolioItems = [
+  {t:"Corporate polo, left chest",c1:"#D8322A",c2:"#7a1a15"},{t:"Wedding hoodie set",c1:"#C9A227",c2:"#6e5714"},
+  {t:"Pet portrait cap",c1:"#3E7C6B",c2:"#1c3b32"},{t:"Band merch back patch",c1:"#8A6FB0",c2:"#3d3050"},
+  {t:"Family reunion tees",c1:"#D8322A",c2:"#7a1a15"},{t:"Startup logo caps",c1:"#C9A227",c2:"#6e5714"},
+  {t:"Anniversary denim jacket",c1:"#3E7C6B",c2:"#1c3b32"},{t:"Custom monogram set",c1:"#8A6FB0",c2:"#3d3050"}
+];
+
+function renderShop(filter='all'){
+  document.getElementById('shop-grid').innerHTML = shopItems.filter(i=>filter==='all'||i.type===filter).map(i=>`
+    <div class="p-card"><div class="p-cover" style="background:linear-gradient(135deg,${i.c1},${i.c2})">${i.title}</div>
+      <div class="p-body"><span class="tag">${i.type}</span>
+        <div class="p-foot"><span class="price">$${i.price}</span><button class="add-btn" onclick="addToCart('${i.id}')">Add to cart</button></div>
+      </div></div>`).join('');
+}
+function renderDesigns(){
+  document.getElementById('designs-grid').innerHTML = designItems.map(i=>`
+    <div class="p-card"><div class="p-cover" style="background:linear-gradient(135deg,${i.c1},${i.c2})">${i.title}</div>
+      <div class="p-body"><span class="tag">${i.tag}</span><span class="desc">Digital file, instant download</span>
+        <div class="p-foot"><span class="price">$${i.price}</span><button class="add-btn" onclick="addToCart('${i.id}')">Add to cart</button></div>
+      </div></div>`).join('');
+}
+function renderPortfolio(){
+  document.getElementById('portfolio-grid').innerHTML = portfolioItems.map(p=>`
+    <div class="pf-item" style="background:linear-gradient(135deg,${p.c1},${p.c2})">${p.t}</div>`).join('');
+}
+function renderProductSwiper(wrapperId, items){
+  document.getElementById(wrapperId).innerHTML = items.slice(0,4).map(i=>`
+    <div class="swiper-slide"><div class="prod-slide">
+      <div class="cov" style="background:linear-gradient(135deg,${i.c1},${i.c2})">${i.title}</div>
+      <div class="info"><span class="price">$${i.price}</span></div>
+    </div></div>`).join('');
+}
+function refreshShopDisplays(){
+  renderShop(); renderProductSwiper('shop-swiper-wrapper', shopItems);
+  try{ shopSwiper && shopSwiper.update(); }catch(e){}
+}
+function refreshDesignDisplays(){
+  renderDesigns(); renderProductSwiper('designs-swiper-wrapper', designItems);
+  try{ designsSwiper && designsSwiper.update(); }catch(e){}
+}
+renderShop(); renderDesigns(); renderPortfolio();
+renderProductSwiper('shop-swiper-wrapper', shopItems);
+renderProductSwiper('designs-swiper-wrapper', designItems);
+try{
+  shopSwiper = new Swiper('#shop-swiper', {slidesPerView:1.3, spaceBetween:16, breakpoints:{700:{slidesPerView:2.3},1000:{slidesPerView:3.5}}});
+  designsSwiper = new Swiper('#designs-swiper', {slidesPerView:1.3, spaceBetween:16, breakpoints:{700:{slidesPerView:2.3},1000:{slidesPerView:3.5}}});
+}catch(e){ console.error('Swiper (shop/designs) failed to init:', e); }
+document.querySelectorAll('#shop-tabs .tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('#shop-tabs .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); renderShop(t.dataset.f);
+}));
+
+/* ---------- LOAD PRODUCTS FROM SUPABASE (falls back to defaults above if it fails) ---------- */
+async function loadProductsFromDB(){
+  if(!sb) return;
+  try{
+    const { data: shopData, error: e1 } = await sb.from('shop_products').select('*').order('title');
+    if(!e1 && shopData){
+      shopItems = shopData.map(p=>({id:p.id, title:p.title, type:p.type, price:p.price, c1:p.color1, c2:p.color2}));
+      refreshShopDisplays();
+    }
+  }catch(e){ console.error('Could not load shop_products, keeping defaults:', e); }
+  try{
+    const { data: designData, error: e2 } = await sb.from('designs').select('*').order('title');
+    if(!e2 && designData){
+      designItems = designData.map(p=>({id:p.id, title:p.title, tag:p.tag, price:p.price, c1:p.color1, c2:p.color2}));
+      refreshDesignDisplays();
+    }
+  }catch(e){ console.error('Could not load designs, keeping defaults:', e); }
+}
+loadProductsFromDB();
+
+/* ---------- CART ---------- */
+let cart = JSON.parse(localStorage.getItem('sh_cart')||'[]');
+function allItems(){ return [...shopItems,...designItems]; }
+function addToCart(id){
+  const ex = cart.find(i=>i.id===id);
+  if(ex) ex.qty++; else cart.push({id,qty:1});
+  saveCart(); renderCart(); openCart();
+}
+function changeQty(id,d){ const it=cart.find(i=>i.id===id); if(!it)return; it.qty+=d; if(it.qty<=0) cart=cart.filter(i=>i.id!==id); saveCart(); renderCart(); }
+function removeItem(id){ cart=cart.filter(i=>i.id!==id); saveCart(); renderCart(); }
+function saveCart(){ localStorage.setItem('sh_cart', JSON.stringify(cart)); }
+function renderCart(){
+  const box=document.getElementById('cart-items');
+  document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.qty,0);
+  if(cart.length===0){ box.innerHTML='<p class="empty-msg">Your cart is empty.</p>'; document.getElementById('subtotal').textContent='$0.00'; return; }
+  let total=0;
+  box.innerHTML = cart.map(item=>{
+    const p = allItems().find(x=>x.id===item.id); total += p.price*item.qty;
+    return `<div class="cart-row"><div class="info"><h4>${p.title}</h4><span>$${p.price}</span></div>
+      <div class="qty-ctrl"><button onclick="changeQty('${p.id}',-1)">-</button>${item.qty}<button onclick="changeQty('${p.id}',1)">+</button></div>
+      <button class="remove-btn" onclick="removeItem('${p.id}')">Remove</button></div>`;
+  }).join('');
+  document.getElementById('subtotal').textContent = '$'+total.toFixed(2);
+}
+function openCart(){ document.getElementById('cart-drawer').classList.add('open'); document.getElementById('overlay').style.display='block'; }
+function closeCart(){ document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('overlay').style.display='none'; }
+renderCart();
+
+/* ---------- ORDER WIZARD ---------- */
+let orderType = null;
+document.querySelectorAll('.type-opt').forEach(o=>o.addEventListener('click',()=>{
+  document.querySelectorAll('.type-opt').forEach(x=>x.classList.remove('selected'));
+  o.classList.add('selected'); orderType = o.dataset.type;
+  document.getElementById('garment-field').style.display = orderType==='file' ? 'none':'block';
+}));
+document.querySelectorAll('#garment-chips .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#garment-chips .chip').forEach(x=>x.classList.remove('selected')); c.classList.add('selected');
+}));
+document.querySelectorAll('#placement-chips .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#placement-chips .chip').forEach(x=>x.classList.remove('selected')); c.classList.add('selected');
+}));
+function presetOrder(type){
+  setTimeout(()=>{
+    document.querySelectorAll('.type-opt').forEach(o=>o.classList.toggle('selected', o.dataset.type===type));
+    orderType = type;
+    document.getElementById('garment-field').style.display = type==='file' ? 'none':'block';
+  },50);
+}
+function nextStep(n){
+  if(n===2 && !orderType){ alert('Pick an order type to continue.'); return; }
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  document.getElementById('pg1').classList.toggle('done', n>=1);
+  document.getElementById('pg2').classList.toggle('done', n>=2);
+  document.getElementById('pg3').classList.toggle('done', n>=3);
+}
+function prevStep(n){ document.querySelectorAll('.step').forEach(s=>s.classList.remove('active')); document.getElementById('step'+n).classList.add('active'); }
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+async function submitOrder(ev){
+  const email = document.getElementById('c-email').value;
+  const name = document.getElementById('c-name').value;
+  if(!email){ alert('Enter your email so I can send your quote.'); return; }
+  const notes = document.getElementById('order-notes').value;
+  const garmentEl = document.querySelector('#garment-chips .chip.selected');
+  const placementEl = document.querySelector('#placement-chips .chip.selected');
+  const submitBtn = ev.target;
+  if(!sb){ alert('Connection issue — please try again in a moment or use the chat.'); return; }
+  submitBtn.textContent = 'Sending...'; submitBtn.disabled = true;
+
+  let designFilePath = null;
+  const fileInput = document.getElementById('design-file');
+  if(fileInput.files && fileInput.files[0]){
+    const file = fileInput.files[0];
+    try{
+      const base64 = await fileToBase64(file);
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/hyper-handler`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'apikey': SUPABASE_KEY
+        },
+        body: JSON.stringify({ filename: file.name, contentType: file.type, fileBase64: base64 })
+      });
+      const data = await res.json();
+      if(data.path){ designFilePath = data.path; }
+      else { console.error('File upload failed:', data.error); alert('Could not upload your file — the order will still be sent, but please attach the file again via chat.'); }
+    }catch(e){
+      console.error('File upload failed:', e);
+      alert('Could not upload your file — the order will still be sent, but please attach the file again via chat.');
+    }
+  }
+
+  const { error } = await sb.from('orders').insert([{
+    order_type: orderType,
+    garment: garmentEl ? garmentEl.dataset.g : null,
+    placement: placementEl ? placementEl.dataset.p : null,
+    notes: notes,
+    customer_name: name,
+    customer_email: email,
+    design_file_path: designFilePath
+  }]);
+
+  submitBtn.textContent = 'Submit request'; submitBtn.disabled = false;
+  if(error){
+    alert('Something went wrong sending your request — please try again or use the chat.');
+    console.error(error);
+    return;
+  }
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-done').classList.add('active');
+}
+
+/* ---------- ADMIN ---------- */
+async function checkAdminSession(){
+  showAdminLogin();
+  try{
+    if(!sb) return;
+    const { data } = await sb.auth.getSession();
+    if(data && data.session){ showAdminDashboard(); }
+  }catch(e){ console.error('Admin session check failed:', e); }
+}
+function showAdminLogin(){ document.getElementById('admin-login-box').style.display='block'; document.getElementById('admin-dashboard').style.display='none'; }
+function showAdminDashboard(){ document.getElementById('admin-login-box').style.display='none'; document.getElementById('admin-dashboard').style.display='block'; loadOrders(); }
+async function adminLogin(){
+  if(!sb){ document.getElementById('admin-error').textContent = 'Connection issue — try reloading the page.'; return; }
+  const email = document.getElementById('admin-email').value;
+  const password = document.getElementById('admin-pass').value;
+  try{
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ document.getElementById('admin-error').textContent = 'Wrong email or password.'; return; }
+    showAdminDashboard();
+  }catch(e){ document.getElementById('admin-error').textContent = 'Something went wrong — try again.'; console.error(e); }
+}
+async function adminLogout(){ await sb.auth.signOut(); showAdminLogin(); }
+async function loadOrders(){
+  const box = document.getElementById('orders-list');
+  box.innerHTML = 'Loading...';
+  const { data, error } = await sb.from('orders').select('*').order('created_at', {ascending:false});
+  if(error){ box.innerHTML = 'Could not load orders.'; console.error(error); return; }
+  if(!data.length){ box.innerHTML = '<p class="empty-msg">No orders yet.</p>'; return; }
+  box.innerHTML = data.map(o=>`
+    <div class="p-card" style="margin-bottom:14px; padding:18px; flex-direction:row; flex-wrap:wrap; justify-content:space-between; gap:14px; align-items:center;">
+      <div>
+        <strong>${o.customer_name||'(no name)'} — ${o.customer_email}</strong><br>
+        <span style="color:var(--muted); font-size:.85rem;">${o.order_type} · ${o.garment||'-'} · ${o.placement||'-'}</span><br>
+        <span style="font-size:.82rem;">${o.notes||''}</span>
+        ${o.design_file_path ? `<br><button class="add-btn" style="margin-top:6px;" onclick="downloadOrderFile('${o.design_file_path}')">Download file</button>` : ''}
+      </div>
+      <select onchange="updateOrderStatus('${o.id}', this.value)" style="padding:6px 10px; border-radius:8px; border:1px solid var(--line);">
+        <option value="new" ${o.status==='new'?'selected':''}>New</option>
+        <option value="in_progress" ${o.status==='in_progress'?'selected':''}>In progress</option>
+        <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
+      </select>
+    </div>`).join('');
+}
+async function downloadOrderFile(path){
+  const { data, error } = await sb.storage.from('designs').createSignedUrl(path, 60);
+  if(error){ alert('Could not get file link.'); console.error(error); return; }
+  window.open(data.signedUrl, '_blank');
+}
+async function updateOrderStatus(id, status){
+  await sb.from('orders').update({status}).eq('id', id);
+}
+
+/* ---------- ADMIN: PRODUCTS ---------- */
+document.querySelectorAll('.admin-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const tab = t.dataset.tab;
+  document.getElementById('admin-panel-orders').style.display = tab==='orders' ? 'block':'none';
+  document.getElementById('admin-panel-products').style.display = tab==='products' ? 'block':'none';
+  if(tab==='products') loadAdminProducts();
+}));
+
+async function loadAdminProducts(){
+  if(!sb) return;
+  const { data: shopData } = await sb.from('shop_products').select('*').order('title');
+  document.getElementById('admin-shop-list').innerHTML = (shopData||[]).map(p=>`
+    <div class="cart-row"><div class="info"><h4>${p.title}</h4><span>${p.type} · $${p.price}</span></div>
+      <button class="remove-btn" onclick="deleteShopProduct('${p.id}')">Delete</button></div>`).join('') || '<p class="empty-msg">No shop products yet.</p>';
+
+  const { data: designData } = await sb.from('designs').select('*').order('title');
+  document.getElementById('admin-designs-list').innerHTML = (designData||[]).map(p=>`
+    <div class="cart-row"><div class="info"><h4>${p.title}</h4><span>${p.tag} · $${p.price}</span></div>
+      <button class="remove-btn" onclick="deleteDesignProduct('${p.id}')">Delete</button></div>`).join('') || '<p class="empty-msg">No designs yet.</p>';
+}
+async function addShopProduct(){
+  const title = document.getElementById('np-title').value;
+  const type = document.getElementById('np-type').value;
+  const price = parseFloat(document.getElementById('np-price').value);
+  const color1 = document.getElementById('np-color1').value;
+  const color2 = document.getElementById('np-color2').value;
+  if(!title || !price){ alert('Enter a title and price.'); return; }
+  const { error } = await sb.from('shop_products').insert([{title, type, price, color1, color2}]);
+  if(error){ alert('Could not add product.'); console.error(error); return; }
+  document.getElementById('np-title').value=''; document.getElementById('np-price').value='';
+  loadAdminProducts(); loadProductsFromDB();
+}
+async function deleteShopProduct(id){
+  await sb.from('shop_products').delete().eq('id', id);
+  loadAdminProducts(); loadProductsFromDB();
+}
+async function addDesignProduct(){
+  const title = document.getElementById('nd-title').value;
+  const tag = document.getElementById('nd-tag').value;
+  const price = parseFloat(document.getElementById('nd-price').value);
+  const color1 = document.getElementById('nd-color1').value;
+  const color2 = document.getElementById('nd-color2').value;
+  if(!title || !price){ alert('Enter a title and price.'); return; }
+  const { error } = await sb.from('designs').insert([{title, tag, price, color1, color2}]);
+  if(error){ alert('Could not add design.'); console.error(error); return; }
+  document.getElementById('nd-title').value=''; document.getElementById('nd-price').value='';
+  loadAdminProducts(); loadProductsFromDB();
+}
+async function deleteDesignProduct(id){
+  await sb.from('designs').delete().eq('id', id);
+  loadAdminProducts(); loadProductsFromDB();
+}
+</script>
+</body>
+</html>
